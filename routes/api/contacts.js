@@ -1,7 +1,20 @@
 const express = require('express')
+const joi = require('joi')
 const { listContacts,getContactById, addContact, removeContact,updateContact,} = require("../../models/contacts.js");
-// const contacts =  listContacts();
 const router = express.Router()
+
+const schema = joi.object({
+  name: joi.string().alphanum().min(3).max(30).required().messages({
+    "any.required": "Missing required name field",
+  }),
+  email: joi.string().email().required().messages({
+    "any.required": "Missing required email field",
+    "string.email": "Email must be a valid email address",
+  }),
+  phone: joi.string().alphanum().min(9).required().messages({
+    "any.required": "Missing required phone field",
+  }),
+});
 
 router.get('/', async (req, res, next) => {
   try {
@@ -38,11 +51,13 @@ router.get('/:contactId', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   try {
-    // const { name, email, phone } = req.body;
+    const  errorJoi  = schema.validate(req.body);
+    if (errorJoi)
+    {
+      return res.status(400).json({ message: errorJoi.error.details[0].message });
+      }
     const contact = await addContact(req.body);
-    console.log(contact);
     if (contact) {
-      console.log(contact);
       res.status(201).json(contact); 
     } else {
       res.status(404).json(contact); 
@@ -70,19 +85,24 @@ router.delete('/:contactId', async (req, res, next) => {
 
 router.put('/:contactId', async (req, res, next) => {
   try {
-     const result = await updateContact(req.params.contactId, req.body);
-    if(result==="Contact update")
-    {
-      res.status(200).json({ message: result }); 
-    } else {
-      if(result==='err'){ res.status(404).json({ message: "missing fields"}); } 
-      else {
-        res.status(201).json({ message: "Add Contact" });
+       const  errorJoi  = schema.validate(req.body);
+      if (errorJoi)
+      {
+        return res.status(400).json({ message: errorJoi.error.details[0].message });
       }
+
+
+      const result = await updateContact(req.params.contactId, req.body);
+      if(result==="Contact update")
+      {
+        res.status(200).json({ message: result }); 
+      } else {
+        if(result==='err'){ res.status(404).json({ message: "missing fields"}); } 
+        else {res.status(201).json({ message: "Add Contact" }); }
+      }
+    } catch (error) {
+      next(error);
     }
-  } catch (error) {
-    next(error);
-  }
-})
+  })
 
 module.exports = router
