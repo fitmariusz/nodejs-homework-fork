@@ -1,10 +1,9 @@
 const express = require('express')
-const { listContacts,getContactById, addContact, removeContact,} = require("../../models/contacts.js");
+const { listContacts,getContactById, addContact, removeContact,updateContact,} = require("../../models/contacts.js");
 // const contacts =  listContacts();
 const router = express.Router()
 
 router.get('/', async (req, res, next) => {
-  // res.json({ message: 'template message' })
   try {
     const contacts =  await listContacts();
     res.json({
@@ -22,9 +21,7 @@ router.get('/', async (req, res, next) => {
 router.get('/:contactId', async (req, res, next) => {
   // res.json({ message: 'Contact ID' })
   try {
-    const searchById = req.params.contactId
-    console.log(searchById);
-    const contact = await getContactById(searchById);
+    const contact = await getContactById(req.params.contactId);
     if(!contact)
     {
       res.status(404).json({message: "Not found"}); 
@@ -40,7 +37,6 @@ router.get('/:contactId', async (req, res, next) => {
 })
 
 router.post('/', async (req, res, next) => {
-  
   try {
     // const { name, email, phone } = req.body;
     const contact = await addContact(req.body);
@@ -58,14 +54,14 @@ router.post('/', async (req, res, next) => {
 
 router.delete('/:contactId', async (req, res, next) => {
    try {
-    const id = req.params.contactId
-    const contact = await removeContact(id);
-    if(!contact)
+     const result = await removeContact(req.params.contactId);
+     console.log(result);
+    if(result==="Contact deleted")
     {
-      res.status(404).json({message: "Not found"}); 
-      console.log(contact);
+      res.status(200).json({ message: result }); 
     } else {
-      res.status(200).json({"message": "contact deleted"}); 
+      
+      res.status(404).json({message: result}); 
     }
   } catch (error) {
     next(error);
@@ -73,7 +69,20 @@ router.delete('/:contactId', async (req, res, next) => {
 })
 
 router.put('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
+  try {
+     const result = await updateContact(req.params.contactId, req.body);
+    if(result==="Contact update")
+    {
+      res.status(200).json({ message: result }); 
+    } else {
+      if(result==='err'){ res.status(404).json({ message: "missing fields"}); } 
+      else {
+        res.status(201).json({ message: "Add Contact" });
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
 })
 
 module.exports = router

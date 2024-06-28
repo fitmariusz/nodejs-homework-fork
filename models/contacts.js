@@ -38,10 +38,11 @@ const removeContact = async (contactId) => {
     const contacts = await readContacts(contactsPath);
     const index = contacts.findIndex((contact) => contact.id === contactId);
     if (index !== -1) {
-    contacts.splice(index, 1);
+      contacts.splice(index, 1);
+      await writeContacts(contacts, contactsPath);
+      return "Contact deleted";
     }
-    await writeContacts(contacts, contactsPath);
-    return contacts;
+    return "Contact not found. Please try again";
   } catch (error) {
     console.error("Error fetching contacts: ", error);
     throw error;
@@ -63,7 +64,40 @@ const addContact = async (body) => {
   }
 }
 
-const updateContact = async (contactId, body) => {}
+const updateContact = async (contactId, body) => {
+  const { name, email, phone } = body;
+  const contacts = await readContacts(contactsPath);
+ 
+const index = contacts.findIndex((contact) => contact.id === contactId);
+  console.log(index);
+  if (index !== -1)
+  {
+    contacts[index] = { ...contacts[index], ...body };
+    writeContacts(contacts, contactsPath)
+    return "Contact update"
+  }
+  else {
+    addContact(body)
+    return "ok"
+    
+  }
+//   if (!putContact)
+//   {
+//     putContact.name = name;
+//     putContact.email = email;
+//     putContact.phone = phone;
+//     writeContacts(contacts, contactsPath);
+//     return "Contact update";
+//   } else {
+//     if (!addContact(body))
+//     {
+//       return "err"
+//     }
+//     else {
+//       return "OK"
+//     }
+//     }
+}
 
 module.exports = {
   listContacts,
