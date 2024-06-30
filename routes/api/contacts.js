@@ -1,17 +1,33 @@
 const express = require('express')
 const joi = require('joi')
-const { listContacts,getContactById, addContact, removeContact,updateContact,} = require("../../models/contacts.js");
+const {
+  listContacts,
+  getContactById,
+  addContact,
+  removeContact,
+  updateContact,
+} = require("../../models/contacts.js");
 const router = express.Router()
 
 const schema = joi.object({
-  name: joi.string().alphanum().min(3).max(30).required().messages({
+  name: joi.string()
+    .min(3)
+    .max(30)
+    .required()
+    .messages({
     "any.required": "Missing required name field",
   }),
-  email: joi.string().email().required().messages({
+  email: joi.string()
+    .email()
+    .required()
+    .messages({
     "any.required": "Missing required email field",
     "string.email": "Email must be a valid email address",
   }),
-  phone: joi.string().alphanum().min(9).required().messages({
+  phone: joi.string()
+    .min(9)
+    .required()
+    .messages({
     "any.required": "Missing required phone field",
   }),
 });
@@ -32,7 +48,6 @@ router.get('/', async (req, res, next) => {
 })
 
 router.get('/:contactId', async (req, res, next) => {
-  // res.json({ message: 'Contact ID' })
   try {
     const contact = await getContactById(req.params.contactId);
     if(!contact)
@@ -51,11 +66,14 @@ router.get('/:contactId', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   try {
-    const  errorJoi  = schema.validate(req.body);
-    if (errorJoi)
+    const errorJoi = schema.validate(req.body);
+    if (errorJoi.error)
     {
+      console.log(res.status(400).json({ message: errorJoi.error.details[0].message }));
       return res.status(400).json({ message: errorJoi.error.details[0].message });
-      }
+    }
+    console.log("body");
+    console.log(req.body);
     const contact = await addContact(req.body);
     if (contact) {
       res.status(201).json(contact); 
@@ -68,14 +86,12 @@ router.post('/', async (req, res, next) => {
 })
 
 router.delete('/:contactId', async (req, res, next) => {
-   try {
-     const result = await removeContact(req.params.contactId);
-     console.log(result);
+  try {
+    const result = await removeContact(req.params.contactId);
     if(result==="Contact deleted")
     {
       res.status(200).json({ message: result }); 
     } else {
-      
       res.status(404).json({message: result}); 
     }
   } catch (error) {
@@ -85,13 +101,11 @@ router.delete('/:contactId', async (req, res, next) => {
 
 router.put('/:contactId', async (req, res, next) => {
   try {
-       const  errorJoi  = schema.validate(req.body);
-      if (errorJoi)
+      const  errorJoi  = schema.validate(req.body);
+      if (errorJoi.error)
       {
         return res.status(400).json({ message: errorJoi.error.details[0].message });
       }
-
-
       const result = await updateContact(req.params.contactId, req.body);
       if(result==="Contact update")
       {
@@ -103,6 +117,6 @@ router.put('/:contactId', async (req, res, next) => {
     } catch (error) {
       next(error);
     }
-  })
+})
 
 module.exports = router

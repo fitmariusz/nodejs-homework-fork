@@ -65,38 +65,21 @@ const addContact = async (body) => {
 }
 
 const updateContact = async (contactId, body) => {
-  const { name, email, phone } = body;
-  const contacts = await readContacts(contactsPath);
- 
-const index = contacts.findIndex((contact) => contact.id === contactId);
-  console.log(index);
-  if (index !== -1)
-  {
-    contacts[index] = { ...contacts[index], ...body };
-    writeContacts(contacts, contactsPath)
-    return "Contact update"
+  try {
+    const contacts = await readContacts(contactsPath);
+    const index = contacts.findIndex((contact) => contact.id === contactId);
+    if (index !== -1) {
+      contacts[index] = { ...contacts[index], ...body };
+      await writeContacts(contacts, contactsPath)
+      return "Contact update"
+    } else {
+      addContact(body)
+      return "ok"
+    }
+  } catch (error) {
+    console.error("Error fetching contacts: ", error);
+    throw error;
   }
-  else {
-    addContact(body)
-    return "ok"
-    
-  }
-//   if (!putContact)
-//   {
-//     putContact.name = name;
-//     putContact.email = email;
-//     putContact.phone = phone;
-//     writeContacts(contacts, contactsPath);
-//     return "Contact update";
-//   } else {
-//     if (!addContact(body))
-//     {
-//       return "err"
-//     }
-//     else {
-//       return "OK"
-//     }
-//     }
 }
 
 module.exports = {
