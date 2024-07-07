@@ -15,7 +15,7 @@ const fetchContactById = (id) => {
     return Contact.findOne({_id:id});
 }
 
-const insertContact = (body) => {
+const insertContact = async (body) => {
     console.log(body);
     const { name, email, phone, favorite } = body;
     return Contact.insertMany({
@@ -31,6 +31,7 @@ module.exports = {
     fetchContacts,
     fetchContactById,
     insertContact,
+    
     // updateTask,
     // removeTask
 };

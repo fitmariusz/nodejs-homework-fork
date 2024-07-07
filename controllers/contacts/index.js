@@ -44,11 +44,16 @@ const addContact = async (res, req, next) => {
         next(error)
     }
 }
+const putContact = (res, req, next) => { 
+    console.log(req.params.id);
+    console.log(req.params.body);
+}; 
 
 module.exports = {
     getContacts,
     getContactById,
     addContact,
+    putContact,
     // patchTask,
     // putTask,
     // deleteTask
