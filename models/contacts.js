@@ -29,7 +29,7 @@ const contactSchema = new mongoose.Schema({
 // find({orderId: 1}, price: {$gte: 100, $lte: 200}).sort({orderDate: -1});
 
 contactSchema.statics.getAll = function () {
-    return Contact.find({});
+    return Contact.find({}).lean();
 }
 
 contactSchema.methods.htmlify = function () {

@@ -1,16 +1,33 @@
+const { fetchContacts, fetchContactById, removeContact } = require("./serwice");
+
 const listContacts = async (req, res, next) => { 
-  console.log(req.body);
-  res.json({ message: 'Allcontacts' })
+    try{
+        const contacts = await fetchContacts()
+        res.json({ contacts })
+    } catch (error) {
+        next(error) 
+    }
 }
 
 const getContactById =  async (req, res, next) => { 
   console.log(req.params.contactId);
-  res.json({ message: 'contactById' })
+//     res.json({ message: 'contactById' })
+    try{
+        const contact = await fetchContactById(req.params.contactId)
+        res.json({ contact })
+    } catch (error) {
+        next(error) 
+    }
 }
 
-const removeContact = async (req, res, next) => {
+const deleteContact = async (req, res, next) => {
   console.log(req.params.contactId);
-  res.json({ message: 'Delete contact' })
+    try{
+        const contact = await removeContact(req.params.contactId)
+        res.json({ contact })
+    } catch (error) {
+        next(error) 
+    }
 }
 
 const addContact =  async (req, res, next) => {
@@ -27,7 +44,7 @@ const updateContact = async (req, res, next) => {
 module.exports = {
   listContacts,
   getContactById,
-  removeContact,
+  deleteContact,
   addContact,
   updateContact,
 }
