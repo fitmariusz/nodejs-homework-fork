@@ -1,24 +1,36 @@
+// const {mongoose } = require("mongoose");
 const Contact = require("../../models/contacts");
+// const mongoose = require('mongoose');
+// const {ObjectId} = mongoose.Types;
 
 
 const fetchContacts = async () => {
 
-    return Contact.find().lean();
+    return Contact.getAll();
 }
 
-// const fetchContactById = (id) => {
-//     return Contacts.findById({ _id: id })
-// }
+const fetchContactById = (id) => {
+    console.log(typeof(id));
+// console.log(Contact.findByIdAndDelete(id));
+    return Contact.findOne({_id:id});
+}
 
-// const insertContact = (body) => {
-//     return Contacts.insertOne(body);
+const insertContact = (body) => {
+    console.log(body);
+    const { name, email, phone, favorite } = body;
+    return Contact.insertMany({
+        name,
+        email,
+        phone,
+        favorite
+    });
 
-// }
+}
 
 module.exports = {
     fetchContacts,
-    // fetchContactById,
-    // insertContact,
+    fetchContactById,
+    insertContact,
     // updateTask,
     // removeTask
 };
