@@ -12,14 +12,47 @@ const removeContact = async (contactId) => {
     return Contact.findByIdAndDelete(contactId);
 }
 
+const insertContact = async (body) => {
+    console.log(body);
+    const { name, email, phone, favorite } = body;
+    return Contact.create({
+        name,
+        email,
+        phone,
+        favorite
+    });
+
+}
+const updateContact = async (contactId, body) => {
+    console.log(contactId);
+    console.log(body);
+    const { name, email, phone, favorite } = body
+    return Contact.findOneAndUpdate({ _id: contactId }, {
+        name: name,
+        email: email,
+        phone: phone,
+        favorite:favorite,
+
+    });
+}
+
+const updateStatusContact = async (contactId, body) => {
+    console.log(contactId);
+    console.log(body);
+    const { favorite } = body
+    return Contact.findOneAndUpdate({ _id: contactId }, {
+        favorite:favorite,
+    });
+}
 
 
 module.exports = {
     fetchContacts,
     fetchContactById,
     removeContact,
-    // insertContact,
-    
+    insertContact,
+    updateContact,
+    updateStatusContact,
     // updateTask,
     // removeTask
 };
