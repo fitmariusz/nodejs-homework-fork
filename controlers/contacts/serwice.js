@@ -24,16 +24,15 @@ const insertContact = async (body) => {
 
 }
 const updateContact = async (contactId, body) => {
-    console.log(contactId);
-    console.log(body);
     const { name, email, phone, favorite } = body
-    return Contact.findOneAndUpdate({ _id: contactId }, {
+   const value =  Contact.findOneAndUpdate({ _id: contactId }, {
         name: name,
         email: email,
         phone: phone,
         favorite:favorite,
 
-    });
+   });
+    return value
 }
 
 const updateStatusContact = async (contactId, body) => {
