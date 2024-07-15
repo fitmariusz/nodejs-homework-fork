@@ -9,11 +9,11 @@ const fetchContactById = async (contactId) => {
 };
 
 const removeContact = async (contactId) => {
-  console.log('remove contact:', contactId);
+  console.log("remove contact:", contactId);
   const result = Contact.findByIdAndDelete(contactId);
 
-  console.log('Result Delete', result);
-  return result
+  console.log("Result Delete", result);
+  return result;
 };
 
 const insertContact = async (body) => {

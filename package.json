@@ -14,18 +14,13 @@
     "cors": "^2.8.5",
     "cross-env": "7.0.3",
     "dotenv": "^16.4.5",
-    "express": "4.17.1",
-<<<<<<< HEAD
-    "joi": "^17.13.3",
     "mongoose": "^8.4.5",
-    "morgan": "^1.10.0"
-=======
     "fs": "^0.0.1-security",
     "joi": "^17.13.3",
     "morgan": "1.10.0",
     "nanoid": "^5.0.7",
     "uuid": "^10.0.0"
->>>>>>> master
+
   },
   "devDependencies": {
     "eslint": "7.19.0",
