@@ -3,7 +3,15 @@ const logger = require('morgan')
 const cors = require('cors')
 const mongoose = require('mongoose');
 const apiRouter = require('./routes/api/contactsRouter');
-const dotenv = require('dotenv')
+
+const usersRouter = require("./routes/api/usersRouter");
+
+const dotenv = require('dotenv');
+
+// require("./config/config-passport");
+
+// const { default: setJWTStrategy } = require('./config/jwt');
+
 
 // const contactsRouter = require('./routes/api/contacts')
 
@@ -21,9 +29,10 @@ const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short'
 app.use(logger(formatsLogger))
 app.use(cors())
 app.use(express.json())
-
+// setJWTStrategy();
 
 app.use('/api', apiRouter)
+app.use("/api/users", usersRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: `Not found - ${req.path}` });

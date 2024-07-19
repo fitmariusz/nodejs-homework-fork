@@ -1,5 +1,5 @@
 
-const mongoose = require("mongoose");
+const mongoose = require("mongoose"); 
 
 const contactSchema = new mongoose.Schema({
   // _id:{type: String},
@@ -19,10 +19,6 @@ const contactSchema = new mongoose.Schema({
   },
 });
 
-// contactSchema.index({ name: 1, favorite: -1 });
-
-// contactSchema.index({ orderId: 1, orderDate: -1, price: 1 });
-// find({orderId: 1}, price: {$gte: 100, $lte: 200}).sort({orderDate: -1});
 
 contactSchema.statics.getAll = function () {
   return Contact.find({}).lean();
