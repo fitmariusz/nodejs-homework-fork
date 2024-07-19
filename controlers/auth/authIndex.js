@@ -78,7 +78,12 @@ const logout = async (req, res, next) => {
     user.token = null;
     await user.save();
 
-    res.status(204).send();
+    res.status(204).json({
+      user: {
+        email: user.email,
+        subscription: user.subscription,
+      },
+    });
   } catch (error) {
     next(error);
   }

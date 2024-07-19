@@ -8,7 +8,6 @@ const {
 const auth = require("../../middlewares/jwtMiddleware");
 const { userSchema } = require("../../validation/validationUser");
 const passport = require("../../middlewares/PassConf");
-// const upload = require("../../middlewares/upload");
 
 router.use(passport.initialize()); 
 
