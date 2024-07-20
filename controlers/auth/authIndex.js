@@ -21,7 +21,6 @@ const register = async (req, res, next) => {
     await newUser.save();
 
     res.status(201).json({
-      status: "success",
       user: {
         email: newUser.email,
         subscription: newUser.subscription,
@@ -69,8 +68,6 @@ const logout = async (req, res, next) => {
 
     if (!user) {
       return res.status(401).json({
-        status: "error",
-        code: 401,
         message: "Not authorized",
       });
     }
@@ -114,15 +111,11 @@ const updateSubscription = async (req, res, next) => {
     );
     if (!user) {
       return res.status(404).json({
-        status: "error",
-        code: 404,
         message: "User not found",
       });
     }
 
     res.json({
-      status: "sucess",
-      code: 200,
       data: {
         email: user.email,
         subscription: user.subscription,
