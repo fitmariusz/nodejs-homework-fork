@@ -32,10 +32,10 @@ const updateContact = async (contactId, body) => {
   const value = Contact.findOneAndUpdate(
     { _id: contactId },
     {
-      name: name,
-      email: email,
-      phone: phone,
-      favorite: favorite,
+      name,
+      email,
+      phone,
+      favorite,
     }
   );
   return value;
@@ -44,11 +44,12 @@ const updateContact = async (contactId, body) => {
 const updateStatusContact = async (contactId, body) => {
   console.log(contactId);
   console.log(body);
+  // const { favorite } = body;
   const { favorite } = body;
   return Contact.findOneAndUpdate(
     { _id: contactId },
     {
-      favorite: favorite,
+      favorite,
     }
   );
 };
@@ -60,6 +61,4 @@ module.exports = {
   insertContact,
   updateContact,
   updateStatusContact,
-  // updateTask,
-  // removeTask
 };
