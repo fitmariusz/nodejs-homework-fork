@@ -22,6 +22,6 @@ router.post("/login", validateBody(userSchema), login);
 router.get("/logout", auth, logout);
 router.get("/current", auth, getCurrentUser);
 router.patch("/", auth, validateSubscription, updateSubscription);
-router.patch("/avatar");
+router.patch("/avatars");
 
 module.exports = router;
