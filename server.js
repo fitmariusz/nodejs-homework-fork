@@ -20,7 +20,7 @@ dotenv.config()
 
 const { DB_HOST: urlDb } = process.env;
 console.log(urlDb);
-const connection = mongoose.connect(urlDb);
+// const connection = mongoose.connect(urlDb);
 
 const app = express()
 
@@ -48,7 +48,7 @@ app.use((err, req, res, next) => {
 
 const startServer = async () => {
     try{
-        await connection;
+        // await connection;
         console.log('Database connected');
         app.listen(8000, () => {
             console.log('Server started on http://localhost:8000');
