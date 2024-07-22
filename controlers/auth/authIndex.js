@@ -21,7 +21,7 @@ console.log(email, password);
     }
 
     const newUser = new User({ email });
-    newUser.avatarURL = gravatar.url(email, { protocol: "https", s: "100" });
+    // newUser.avatarURL = gravatar.url(email, { protocol: "https", s: "100" });
     newUser.setPassword(password);
     await newUser.save();
 
@@ -29,7 +29,7 @@ console.log(email, password);
       user: {
         email: newUser.email,
         subscription: newUser.subscription,
-        avatarURL: newUser.avatarURL,
+        // avatarURL: newUser.avatarURL,
       },
     });
   } catch (error) {
