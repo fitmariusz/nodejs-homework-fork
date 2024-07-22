@@ -2,12 +2,15 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const User = require("../../models/user");
 const gravatar = require("gravatar");
+const fs = require("fs").promises;
+const path = require("path");
+const jimp = require("jimp");
 
 const secret = process.env.SECRET;
 
 const register = async (req, res, next) => {
   const { email, password } = req.body;
-
+console.log(email, password);
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -18,10 +21,10 @@ const register = async (req, res, next) => {
     }
 
     const newUser = new User({ email });
-    const avatarURL = gravatar.url(email , { s: "200", r: "pg", d: "404" });
+    newUser.avatarURL = gravatar.url(email, { protocol: "https", s: "100" });
     newUser.setPassword(password);
     await newUser.save();
-console.log(avatarURL);
+
     res.status(201).json({
       user: {
         email: newUser.email,
@@ -58,6 +61,7 @@ const login = async (req, res, next) => {
       user: {
         email: user.email,
         subscription: user.subscription,
+        avatarURL: user.avatarURL,
       },
     });
   } catch (error) {
@@ -129,10 +133,14 @@ const updateSubscription = async (req, res, next) => {
   }
 };
 
+
+
+
 module.exports = {
   register,
   login,
   logout,
   getCurrentUser,
   updateSubscription,
+
 };
