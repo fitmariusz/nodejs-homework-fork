@@ -135,6 +135,48 @@ const updateSubscription = async (req, res, next) => {
 
 
 
+const updateAvatar = async (req, res, next) => {
+  const avatarsDir = path.join(__dirname, "../../public/avatars");
+  try {
+   
+    const { path: tmpPath, originalname } = req.file;
+    const { _id: userId } = req.user;
+
+    const img = await jimp.read(tmpPath);
+    await img.resize(250, 250).writeAsync(tmpPath);
+
+    const uniqueName = `${userId}-${Date.now()}-${originalname}`;
+    console.log(uniqueName);
+    const avatarURL = path.join("avatars", uniqueName);
+    console.log(avatarURL);
+    const publicPath = path.join(avatarsDir, uniqueName);
+    console.log(publicPath);
+
+    await fs.rename(tmpPath, publicPath);
+
+    await User.findByIdAndUpdate(userId, { avatarURL }, { new: true });
+
+    res.json({
+      status: "success",
+      code: 200,
+      data: {
+        avatarURL: `http://localhost:${
+          process.env.MAIN_PORT || 8000
+        }/api/${avatarURL}`,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAvatar = async (req, res, next) => { 
+  try {
+    res.send(req.params.avatarsFileName);
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   register,
@@ -142,5 +184,7 @@ module.exports = {
   logout,
   getCurrentUser,
   updateSubscription,
+  updateAvatar,
+  getAvatar,
 
 };
