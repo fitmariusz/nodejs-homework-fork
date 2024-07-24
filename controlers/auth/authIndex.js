@@ -10,7 +10,6 @@ const secret = process.env.SECRET;
 
 const register = async (req, res, next) => {
   const { email, password } = req.body;
-console.log(email, password);
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -133,12 +132,9 @@ const updateSubscription = async (req, res, next) => {
   }
 };
 
-
-
 const updateAvatar = async (req, res, next) => {
   const avatarsDir = path.join(__dirname, "../../public/avatars");
   try {
-   
     const { path: tmpPath, originalname } = req.file;
     const { _id: userId } = req.user;
 
@@ -146,14 +142,9 @@ const updateAvatar = async (req, res, next) => {
     await img.resize(250, 250).writeAsync(tmpPath);
 
     const uniqueName = `${userId}-${Date.now()}-${originalname}`;
-    console.log(uniqueName);
     const avatarURL = path.join("avatars", uniqueName);
-    console.log(avatarURL);
     const publicPath = path.join(avatarsDir, uniqueName);
-    console.log(publicPath);
-
     await fs.rename(tmpPath, publicPath);
-
     await User.findByIdAndUpdate(userId, { avatarURL }, { new: true });
 
     res.json({
@@ -170,14 +161,6 @@ const updateAvatar = async (req, res, next) => {
   }
 };
 
-const getAvatar = async (req, res, next) => { 
-  try {
-    res.send(req.params.avatarsFileName);
-  } catch (error) {
-    next(error);
-  }
-};
-
 module.exports = {
   register,
   login,
@@ -185,6 +168,4 @@ module.exports = {
   getCurrentUser,
   updateSubscription,
   updateAvatar,
-  getAvatar,
-
 };
