@@ -27,6 +27,15 @@ const userSchema = new Schema({
     type: String,
     default: null,
   },
+
+  verify: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: {
+    type: String,
+    required: [false, "Verify token is required"],
+  },
 });
 
 userSchema.methods.setPassword = function (password) {
