@@ -1,8 +1,6 @@
-
-const mongoose = require("mongoose"); 
+const mongoose = require("mongoose");
 
 const contactSchema = new mongoose.Schema({
-  // _id:{type: String},
   name: {
     type: String,
     required: [true, "Set name for contact"],
@@ -19,7 +17,6 @@ const contactSchema = new mongoose.Schema({
   },
 });
 
-
 contactSchema.statics.getAll = function () {
   return Contact.find({}).lean();
 };
@@ -28,7 +25,5 @@ contactSchema.methods.htmlify = function () {
   return `<h3>${this.title}</h3><p>${this.text}</p>`;
 };
 const Contact = mongoose.model("contact", contactSchema);
-
-// Contact.create
 
 module.exports = Contact;

@@ -1,12 +1,15 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const User = require("../../models/user");
+const gravatar = require("gravatar");
+const fs = require("fs").promises;
+const path = require("path");
+const jimp = require("jimp");
 
 const secret = process.env.SECRET;
 
 const register = async (req, res, next) => {
   const { email, password } = req.body;
-
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -17,6 +20,7 @@ const register = async (req, res, next) => {
     }
 
     const newUser = new User({ email });
+    newUser.avatarURL = gravatar.url(email, { protocol: "https", s: "100" });
     newUser.setPassword(password);
     await newUser.save();
 
@@ -24,6 +28,7 @@ const register = async (req, res, next) => {
       user: {
         email: newUser.email,
         subscription: newUser.subscription,
+        avatarURL: newUser.avatarURL,
       },
     });
   } catch (error) {
@@ -55,6 +60,7 @@ const login = async (req, res, next) => {
       user: {
         email: user.email,
         subscription: user.subscription,
+        avatarURL: user.avatarURL,
       },
     });
   } catch (error) {
@@ -126,10 +132,40 @@ const updateSubscription = async (req, res, next) => {
   }
 };
 
+const updateAvatar = async (req, res, next) => {
+  const avatarsDir = path.join(__dirname, "../../public/avatars");
+  try {
+    const { path: tmpPath, originalname } = req.file;
+    const { _id: userId } = req.user;
+
+    const img = await jimp.read(tmpPath);
+    await img.resize(250, 250).writeAsync(tmpPath);
+
+    const uniqueName = `${userId}-${Date.now()}-${originalname}`;
+    const avatarURL = path.join("avatars", uniqueName);
+    const publicPath = path.join(avatarsDir, uniqueName);
+    await fs.rename(tmpPath, publicPath);
+    await User.findByIdAndUpdate(userId, { avatarURL }, { new: true });
+
+    res.json({
+      status: "success",
+      code: 200,
+      data: {
+        avatarURL: `http://localhost:${
+          process.env.MAIN_PORT || 8000
+        }/api/${avatarURL}`,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
   logout,
   getCurrentUser,
   updateSubscription,
+  updateAvatar,
 };
