@@ -22,13 +22,22 @@ const register = async (req, res, next) => {
     const newUser = new User({ email });
     newUser.avatarURL = gravatar.url(email, { protocol: "https", s: "100" });
     newUser.setPassword(password);
+
+    const payload = {
+      email: newUser.email,
+    };
+
+    newUser.verificationToken = jwt.sign(payload, secret, { expiresIn: "1d" });
+
     await newUser.save();
 
     res.status(201).json({
       user: {
+        id: newUser._id,
         email: newUser.email,
         subscription: newUser.subscription,
         avatarURL: newUser.avatarURL,
+        verificationToken: newUser.verificationToken,
       },
     });
   } catch (error) {
@@ -161,6 +170,23 @@ const updateAvatar = async (req, res, next) => {
   }
 };
 
+const verificationToken = async (req, res, next) => {
+  const verificationToken = req.params.verificationToken;
+  const existingUser = await User.findOne({ verificationToken });
+  if (!existingUser)
+  {
+   return res.status(404).json({
+     message: "User not found",
+   });
+  } else {
+    const user = await User.findByIdAndUpdate(existingUser._id, { verify: true, verificationToken: null});
+    return res.status(200).json({
+      message: "Verification successful",
+      user,
+    });
+  };
+};
+
 module.exports = {
   register,
   login,
@@ -168,4 +194,5 @@ module.exports = {
   getCurrentUser,
   updateSubscription,
   updateAvatar,
+  verificationToken,
 };
