@@ -25,6 +25,10 @@ router.patch(
 );
 router.patch("/avatars", auth, upload.single("avatar"), authIndex.updateAvatar);
 router.get("/verify/:verificationToken", authIndex.verificationToken);
-router.post("/verify", validate.validateBody(emailToResendTokenSchema), authIndex.resendVerificationToken);
+router.post(
+  "/verify",
+  validate.validateBody(emailToResendTokenSchema),
+  authIndex.resendVerificationToken
+);
 
 module.exports = router;

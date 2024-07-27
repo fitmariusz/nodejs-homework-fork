@@ -13,7 +13,6 @@ const storage = multer.diskStorage({
     cb(null, tmpDir);
   },
   filename: (req, file, cb) => {
-    console.log(file.originalname);
     cb(null, `${Date.now()}-${file.originalname}`);
   },
   limits: {

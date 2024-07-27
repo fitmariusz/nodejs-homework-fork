@@ -219,7 +219,7 @@ const resendVerificationToken = async (req, res, next) => {
     );
     res.status(201).json({
       message: "Verification email sent",
-      verificationToken: User.verificationToken
+      verificationToken: User.verificationToken,
     });
   } catch (error) {
     next(error);

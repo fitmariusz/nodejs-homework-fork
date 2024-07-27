@@ -12,7 +12,6 @@ const usersRouter = require("./routes/api/usersRouter");
 dotenv.config();
 
 const { DB_HOST: urlDb } = process.env;
-console.log(urlDb);
 const connection = mongoose.connect(urlDb);
 
 const app = express();
@@ -51,7 +50,6 @@ const startServer = async () => {
       console.log("Server started on http://localhost:8000");
     });
   } catch (err) {
-    console.log(err);
     process.exit(1);
   }
 };
