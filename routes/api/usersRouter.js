@@ -4,7 +4,10 @@ const router = express.Router();
 const authIndex = require("../../controlers/auth/authIndex");
 const validate = require("../../validation/validationContacts");
 const auth = require("../../middlewares/jwtMiddleware");
-const { userSchema } = require("../../validation/validationUser");
+const {
+  userSchema,
+  emailToResendTokenSchema,
+} = require("../../validation/validationUser");
 const passport = require("../../middlewares/PassConf");
 const upload = require("../../middlewares/uploadAvatar");
 
@@ -22,5 +25,6 @@ router.patch(
 );
 router.patch("/avatars", auth, upload.single("avatar"), authIndex.updateAvatar);
 router.get("/verify/:verificationToken", authIndex.verificationToken);
+router.post("/verify", validate.validateBody(emailToResendTokenSchema), authIndex.resendVerificationToken);
 
 module.exports = router;

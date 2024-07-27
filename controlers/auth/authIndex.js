@@ -32,7 +32,7 @@ const register = async (req, res, next) => {
 
     await newUser.save();
     await emailSend.email(
-      `<h1>Verification mail</h1><a href="http://localhost:${process.env.PORT}/api/users/verify/${newUser.verificationToken}">vrification</a>`,
+      `<h1>Verification mail</h1><a href="http://localhost:${process.env.PORT}/api/users/verify/${newUser.verificationToken}">Verification</a>`,
       "Verification mail in singup",
       email
     );
@@ -198,7 +198,7 @@ const verificationToken = async (req, res, next) => {
   }
 };
 
-const resendVerificationToken = async (res, req, next) => {
+const resendVerificationToken = async (req, res, next) => {
   try {
     const { email } = req.body;
     const verificationMail = await User.findOne({ email });
@@ -212,12 +212,13 @@ const resendVerificationToken = async (res, req, next) => {
       });
     }
     await emailSend.email(
-      `<h1>Verification mail</h1><a href="http://localhost:${process.env.PORT}/api/users/verify/${newUser.verificationToken}">vrification</a>`,
+      `<h1>Verification mail</h1><a href="http://localhost:${process.env.PORT}/api/users/verify/${verificationMail.verificationToken}">Verification</a>`,
       "Verification mail in singup",
       email
     );
     res.status(201).json({
       message: "Verification email sent",
+      verificationToken: User.verificationToken
     });
   } catch (error) {
     next(error);
