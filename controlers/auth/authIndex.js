@@ -5,6 +5,7 @@ const gravatar = require("gravatar");
 const fs = require("fs").promises;
 const path = require("path");
 const jimp = require("jimp");
+const emailSend = require("../mail/email");
 
 const secret = process.env.SECRET;
 
@@ -30,7 +31,11 @@ const register = async (req, res, next) => {
     newUser.verificationToken = jwt.sign(payload, secret, { expiresIn: "1d" });
 
     await newUser.save();
-
+    await emailSend.email(
+      `<h1>Verification mail</h1><a href="http://localhost:${process.env.PORT}/api/users/verify/${newUser.verificationToken}">vrification</a>`,
+      "Verification mail in singup",
+      email
+    );
     res.status(201).json({
       user: {
         id: newUser._id,
@@ -41,7 +46,7 @@ const register = async (req, res, next) => {
       },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -52,6 +57,10 @@ const login = async (req, res, next) => {
 
     if (!user || !user.validPassword(password)) {
       return res.status(401).json({ message: "Email or password is wrong" });
+    } else if (!user.verify) {
+      return res
+        .status(400)
+        .json({ message: "First complete the verification" });
     }
 
     const payload = {
@@ -161,7 +170,7 @@ const updateAvatar = async (req, res, next) => {
       code: 200,
       data: {
         avatarURL: `http://localhost:${
-          process.env.MAIN_PORT || 8000
+          process.env.PORT || 8000
         }/api/${avatarURL}`,
       },
     });
@@ -173,18 +182,46 @@ const updateAvatar = async (req, res, next) => {
 const verificationToken = async (req, res, next) => {
   const verificationToken = req.params.verificationToken;
   const existingUser = await User.findOne({ verificationToken });
-  if (!existingUser)
-  {
-   return res.status(404).json({
-     message: "User not found",
-   });
+  if (!existingUser) {
+    return res.status(404).json({
+      message: "User not found",
+    });
   } else {
-    const user = await User.findByIdAndUpdate(existingUser._id, { verify: true, verificationToken: null});
+    const user = await User.findByIdAndUpdate(existingUser._id, {
+      verify: true,
+      verificationToken: null,
+    });
     return res.status(200).json({
       message: "Verification successful",
       user,
     });
-  };
+  }
+};
+
+const resendVerificationToken = async (res, req, next) => {
+  try {
+    const { email } = req.body;
+    const verificationMail = await User.findOne({ email });
+    if (!verificationMail) {
+      return res.status(400).json({
+        message: "User does not exist in the database",
+      });
+    } else if (verificationMail.verify) {
+      return res.status(400).json({
+        message: "Verification has already been passed",
+      });
+    }
+    await emailSend.email(
+      `<h1>Verification mail</h1><a href="http://localhost:${process.env.PORT}/api/users/verify/${newUser.verificationToken}">vrification</a>`,
+      "Verification mail in singup",
+      email
+    );
+    res.status(201).json({
+      message: "Verification email sent",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {
@@ -195,4 +232,5 @@ module.exports = {
   updateSubscription,
   updateAvatar,
   verificationToken,
+  resendVerificationToken,
 };
