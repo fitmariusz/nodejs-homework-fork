@@ -9,15 +9,11 @@ const fetchContactById = async (contactId) => {
 };
 
 const removeContact = async (contactId) => {
-  console.log("remove contact:", contactId);
   const result = Contact.findByIdAndDelete(contactId);
-
-  console.log("Result Delete", result);
   return result;
 };
 
 const insertContact = async (body) => {
-  console.log(body);
   const { name, email, phone, favorite } = body;
   return Contact.create({
     name,
@@ -42,8 +38,6 @@ const updateContact = async (contactId, body) => {
 };
 
 const updateStatusContact = async (contactId, body) => {
-  console.log(contactId);
-  console.log(body);
   // const { favorite } = body;
   const { favorite } = body;
   return Contact.findOneAndUpdate(

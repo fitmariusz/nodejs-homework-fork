@@ -15,7 +15,15 @@ const subscriptionSchema = Joi.object({
   subscription: Joi.string().valid("starter", "pro", "business").required(),
 });
 
+const emailToResendTokenSchema = Joi.object({
+  email: Joi.string().email().required().messages({
+    "string.email": "Please enter a valid email",
+    "string.empty": "Email field is required",
+  }),
+});
+
 module.exports = {
   userSchema,
   subscriptionSchema,
+  emailToResendTokenSchema,
 };

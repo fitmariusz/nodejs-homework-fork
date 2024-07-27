@@ -42,7 +42,6 @@ router.get("/:contactId", async (req, res, next) => {
     const contact = await getContactById(req.params.contactId);
     if (!contact) {
       res.status(404).json({ message: "Not found" });
-      console.log(contact);
     } else {
       res.status(200).json(contact);
     }
@@ -55,15 +54,10 @@ router.post("/", async (req, res, next) => {
   try {
     const errorJoi = schema.validate(req.body);
     if (errorJoi.error) {
-      console.log(
-        res.status(400).json({ message: errorJoi.error.details[0].message })
-      );
       return res
         .status(400)
         .json({ message: errorJoi.error.details[0].message });
     }
-    console.log("body");
-    console.log(req.body);
     const contact = await addContact(req.body);
     if (contact) {
       res.status(201).json(contact);
