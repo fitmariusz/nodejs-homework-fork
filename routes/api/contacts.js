@@ -54,8 +54,6 @@ router.post("/", async (req, res, next) => {
   try {
     const errorJoi = schema.validate(req.body);
     if (errorJoi.error) {
-        res.status(400).json({ message: errorJoi.error.details[0].message })
-      );
       return res
         .status(400)
         .json({ message: errorJoi.error.details[0].message });
