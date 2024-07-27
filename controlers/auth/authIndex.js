@@ -6,6 +6,7 @@ const fs = require("fs").promises;
 const path = require("path");
 const jimp = require("jimp");
 const emailSend = require("../mail/email");
+const { v4: uuidv4 } = require("uuid");
 
 const secret = process.env.SECRET;
 
@@ -25,7 +26,7 @@ const register = async (req, res, next) => {
     newUser.setPassword(password);
 
     const payload = {
-      email: newUser.email,
+      uuid: uuidv4(),
     };
 
     newUser.verificationToken = jwt.sign(payload, secret, { expiresIn: "1d" });
